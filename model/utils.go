@@ -7,6 +7,9 @@ const (
 )
 
 func CutLast(txt, sep string) string {
+	if sep == "" { // no need to cut
+		return txt
+	}
 	a := strings.LastIndex(txt, sep)
 	if a < 0 {
 		return ""

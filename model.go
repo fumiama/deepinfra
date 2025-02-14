@@ -1,12 +1,10 @@
 package deepinfra
 
 import (
-	"bytes"
-	"io"
+	"github.com/fumiama/deepinfra/model"
 )
 
 type Model interface {
-	Body() *bytes.Buffer
-	Parse(io.Reader) error
-	Output() string
+	model.Inputer
+	model.Outputer
 }

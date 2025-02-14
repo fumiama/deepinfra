@@ -10,8 +10,11 @@ const (
 	modelDeepDeek = "deepseek-ai/DeepSeek-R1"
 )
 
-// DeepSeek as an example.
+// DeepSeek as an specified example.
 type DeepSeek struct {
+	Inputer
+	Outputer
+	MessageBuilder[*DeepSeek]
 	// callback only
 	ID      string   `json:"id,omitempty"`
 	Object  string   `json:"object,omitempty"`
@@ -26,17 +29,6 @@ type DeepSeek struct {
 
 }
 
-type Message struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
-}
-
-type Choice struct {
-	Index        int     `json:"index"`
-	Message      Message `json:"message"`
-	FinishReason string  `json:"finish_reason"`
-}
-
 // NewDeepSeek 0.7, 0.9
 func NewDeepSeek(temp, topp float32, maxn uint) *DeepSeek {
 	ds := new(DeepSeek)
@@ -45,6 +37,15 @@ func NewDeepSeek(temp, topp float32, maxn uint) *DeepSeek {
 	ds.TopP = topp
 	ds.MaxTokens = int(maxn)
 	return ds
+}
+
+func (ds *DeepSeek) Body() *bytes.Buffer {
+	w := bytes.NewBuffer(make([]byte, 0, 16384))
+	err := json.NewEncoder(w).Encode(ds)
+	if err != nil {
+		panic(err)
+	}
+	return w
 }
 
 func (ds *DeepSeek) Parse(body io.Reader) error {
@@ -88,13 +89,4 @@ func (ds *DeepSeek) Assistant(prompt string) *DeepSeek {
 		Content: prompt,
 	})
 	return ds
-}
-
-func (ds *DeepSeek) Body() *bytes.Buffer {
-	w := bytes.NewBuffer(make([]byte, 0, 16384))
-	err := json.NewEncoder(w).Encode(ds)
-	if err != nil {
-		panic(err)
-	}
-	return w
 }
