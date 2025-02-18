@@ -12,9 +12,9 @@ const (
 
 // DeepSeek as an specified example.
 type DeepSeek struct {
-	Inputer
-	Outputer
-	MessageBuilder[*DeepSeek]
+	Inputer                   `json:"-"`
+	Outputer                  `json:"-"`
+	MessageBuilder[*DeepSeek] `json:"-"`
 	// callback only
 	ID      string   `json:"id,omitempty"`
 	Object  string   `json:"object,omitempty"`

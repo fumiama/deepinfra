@@ -8,10 +8,10 @@ import (
 
 // Custom as an compatible example.
 type Custom struct {
-	Inputer
-	Outputer
-	MessageBuilder[*DeepSeek]
-	sep string
+	Inputer                   `json:"-"`
+	Outputer                  `json:"-"`
+	MessageBuilder[*DeepSeek] `json:"-"`
+	sep                       string `json:"-"`
 	// callback only
 	ID      string   `json:"id,omitempty"`
 	Object  string   `json:"object,omitempty"`
