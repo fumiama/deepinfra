@@ -8,8 +8,8 @@ import (
 
 // OLLaMA as an specified example.
 type OLLaMA struct {
-	sep               string
-	Protocol[*OLLaMA] `json:"-"`
+	sep      string
+	Protocol `json:"-"`
 	// callback only
 	ID       string    `json:"id,omitempty"`
 	Object   string    `json:"object,omitempty"`

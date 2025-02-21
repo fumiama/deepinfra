@@ -21,8 +21,8 @@ type MessageBuilder[T any] interface {
 	Assistant(prompt string) T
 }
 
-type Protocol[T any] interface {
+type Protocol interface {
 	Inputer
 	Outputer
-	MessageBuilder[T]
+	MessageBuilder[Protocol]
 }

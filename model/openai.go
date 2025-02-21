@@ -23,8 +23,8 @@ type Choice struct {
 
 // OpenAI as an specified example.
 type OpenAI struct {
-	sep               string
-	Protocol[*OpenAI] `json:"-"`
+	sep      string
+	Protocol `json:"-"`
 	// callback only
 	ID      string   `json:"id,omitempty"`
 	Object  string   `json:"object,omitempty"`
