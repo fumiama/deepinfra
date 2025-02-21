@@ -21,6 +21,7 @@ type OLLaMA struct {
 	Temperature float32  `json:"temperature"` // Temperature 0.7
 	TopP        float32  `json:"top_p"`       // TopP 0.9
 	MaxTokens   int      `json:"max_tokens"`  // MaxTokens 4096
+	Stream      bool     `json:"stream"`
 }
 
 // NewOLLaMA use temp 0.7, topp 0.9, maxn 4096 if you don't know the meaning.
