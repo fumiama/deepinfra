@@ -61,7 +61,7 @@ func (ollm *OLLaMA) OutputRaw() string {
 	return ollm.Message.Content
 }
 
-func (ollm *OLLaMA) System(prompt string) *OLLaMA {
+func (ollm *OLLaMA) System(prompt string) Protocol {
 	ollm.Messages = make([]Message, 1, 8)
 	ollm.Messages[0] = Message{
 		Role:    "system",
@@ -70,7 +70,7 @@ func (ollm *OLLaMA) System(prompt string) *OLLaMA {
 	return ollm
 }
 
-func (ollm *OLLaMA) User(prompt string) *OLLaMA {
+func (ollm *OLLaMA) User(prompt string) Protocol {
 	ollm.Messages = append(ollm.Messages, Message{
 		Role:    "user",
 		Content: prompt,
@@ -78,7 +78,7 @@ func (ollm *OLLaMA) User(prompt string) *OLLaMA {
 	return ollm
 }
 
-func (ollm *OLLaMA) Assistant(prompt string) *OLLaMA {
+func (ollm *OLLaMA) Assistant(prompt string) Protocol {
 	ollm.Messages = append(ollm.Messages, Message{
 		Role:    "assistant",
 		Content: prompt,

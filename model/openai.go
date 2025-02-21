@@ -76,7 +76,7 @@ func (opai *OpenAI) OutputRaw() string {
 	return opai.Choices[len(opai.Choices)-1].Message.Content
 }
 
-func (opai *OpenAI) System(prompt string) *OpenAI {
+func (opai *OpenAI) System(prompt string) Protocol {
 	opai.Messages = make([]Message, 1, 8)
 	opai.Messages[0] = Message{
 		Role:    "system",
@@ -85,7 +85,7 @@ func (opai *OpenAI) System(prompt string) *OpenAI {
 	return opai
 }
 
-func (opai *OpenAI) User(prompt string) *OpenAI {
+func (opai *OpenAI) User(prompt string) Protocol {
 	opai.Messages = append(opai.Messages, Message{
 		Role:    "user",
 		Content: prompt,
@@ -93,7 +93,7 @@ func (opai *OpenAI) User(prompt string) *OpenAI {
 	return opai
 }
 
-func (opai *OpenAI) Assistant(prompt string) *OpenAI {
+func (opai *OpenAI) Assistant(prompt string) Protocol {
 	opai.Messages = append(opai.Messages, Message{
 		Role:    "assistant",
 		Content: prompt,
