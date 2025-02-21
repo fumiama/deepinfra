@@ -21,13 +21,8 @@ type MessageBuilder[T any] interface {
 	Assistant(prompt string) T
 }
 
-type Message struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
-}
-
-type Choice struct {
-	Index        int     `json:"index"`
-	Message      Message `json:"message"`
-	FinishReason string  `json:"finish_reason"`
+type Protocol[T any] interface {
+	Inputer
+	Outputer
+	MessageBuilder[T]
 }
