@@ -1,7 +1,10 @@
 package deepinfra
 
 import (
+	"errors"
+	"io"
 	"net/http"
+	"strings"
 )
 
 const (
@@ -29,6 +32,13 @@ func (api *API) Request(model Model) (string, error) {
 		return "", err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		sb := strings.Builder{}
+		sb.WriteString(resp.Status)
+		sb.WriteByte(' ')
+		_, _ = io.Copy(&sb, resp.Body)
+		return "", errors.New(sb.String())
+	}
 	err = model.Parse(resp.Body)
 	if err != nil {
 		return "", err
