@@ -11,8 +11,10 @@ func (item *item) writeToBuilder(sb *strings.Builder, atprefix, namel, namer str
 	if item.isatme {
 		sb.WriteString(atprefix)
 	}
-	sb.WriteString(namel)
-	sb.WriteString(item.usr)
-	sb.WriteString(namer)
+	if item.usr != "" {
+		sb.WriteString(namel)
+		sb.WriteString(item.usr)
+		sb.WriteString(namer)
+	}
 	sb.WriteString(item.txt)
 }
