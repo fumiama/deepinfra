@@ -7,4 +7,5 @@ import (
 type Model interface {
 	model.Inputer
 	model.Outputer
+	model.Requester
 }

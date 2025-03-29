@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"net/http"
 )
 
 const (
@@ -47,6 +48,15 @@ func NewOpenAI(model, sep string, temp, topp float32, maxn uint) *OpenAI {
 	opai.TopP = topp
 	opai.MaxTokens = int(maxn)
 	return opai
+}
+
+func (*OpenAI) API(api, _ string) string {
+	return api
+}
+
+func (*OpenAI) Header(key string, h http.Header) {
+	h.Add("Content-Type", "application/json")
+	h.Add("Authorization", "Bearer "+key)
 }
 
 func (opai *OpenAI) Body() *bytes.Buffer {

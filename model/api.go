@@ -3,6 +3,7 @@ package model
 import (
 	"bytes"
 	"io"
+	"net/http"
 )
 
 type Inputer interface {
@@ -15,6 +16,11 @@ type Outputer interface {
 	OutputRaw() string
 }
 
+type Requester interface {
+	API(api, key string) string       // API decorator
+	Header(key string, h http.Header) // Header decorator
+}
+
 type MessageBuilder[T any] interface {
 	System(prompt string) T
 	User(prompt string) T
@@ -24,5 +30,6 @@ type MessageBuilder[T any] interface {
 type Protocol interface {
 	Inputer
 	Outputer
+	Requester
 	MessageBuilder[Protocol]
 }

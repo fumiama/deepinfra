@@ -8,7 +8,8 @@ import (
 )
 
 const (
-	APIDeepInfra = "https://api.deepinfra.com/v1/openai/chat/completions"
+	OpenAIDeepInfra = "https://api.deepinfra.com/v1/openai/chat/completions"
+	GenAIGoogle     = "https://generativelanguage.googleapis.com/v1beta"
 )
 
 type API struct {
@@ -21,12 +22,11 @@ func NewAPI(api, key string) API {
 }
 
 func (api *API) Request(model Model) (string, error) {
-	req, err := http.NewRequest("POST", api.api, model.Body())
+	req, err := http.NewRequest("POST", model.API(api.api, api.key), model.Body())
 	if err != nil {
 		return "", err
 	}
-	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", "Bearer "+api.key)
+	model.Header(api.key, req.Header)
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return "", err
