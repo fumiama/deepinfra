@@ -1,5 +1,5 @@
 # deepinfra
-Call OpenAI/OLLaMA/GenAI compatible APIs, originally designed for DeepInfra.
+Lightweight OpenAI/OLLaMA/GenAI compatible caller, originally designed for DeepInfra.
 
 ## Quick Start
 ```go
