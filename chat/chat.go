@@ -89,3 +89,18 @@ func (l *Log) Modelize(p model.Protocol, grp int64, sysp string) deepinfra.Model
 	}
 	return m
 }
+
+// Modelize into any type from index and message
+func Modelize[T any](l *Log, grp int64, f func(int, string) T) []T {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+	sz := len(l.m[grp])
+	if sz == 0 {
+		return []T{f(0, l.defaultprompt)}
+	}
+	t := make([]T, sz)
+	for i, msg := range l.m[grp] {
+		t[i] = f(i, msg.String())
+	}
+	return t
+}
