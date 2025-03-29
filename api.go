@@ -15,10 +15,15 @@ const (
 type API struct {
 	api string // api to call
 	key string // key in Authorization: Bearer
+	cli *http.Client
 }
 
 func NewAPI(api, key string) API {
 	return API{api: api, key: key}
+}
+
+func (api *API) SetHTTPClient(c *http.Client) {
+	api.cli = c
 }
 
 func (api *API) Request(model Model) (string, error) {
@@ -27,7 +32,11 @@ func (api *API) Request(model Model) (string, error) {
 		return "", err
 	}
 	model.Header(api.key, req.Header)
-	resp, err := http.DefaultClient.Do(req)
+	cli := http.DefaultClient
+	if api.cli != nil {
+		cli = api.cli
+	}
+	resp, err := cli.Do(req)
 	if err != nil {
 		return "", err
 	}
