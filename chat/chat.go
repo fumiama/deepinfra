@@ -72,8 +72,11 @@ func (l *Log) Add(grp int64, usr, txt string, isbot, isatme bool) {
 	l.m[grp] = msgs[:len(msgs)-1]
 }
 
-func (l *Log) Modelize(p model.Protocol, grp int64, sysp string) deepinfra.Model {
-	m := p.System(sysp)
+func (l *Log) Modelize(p model.Protocol, grp int64, sysp string, isusersystem bool) deepinfra.Model {
+	m := p
+	if sysp != "" && !isusersystem {
+		m.System(sysp)
+	}
 	l.mu.RLock()
 	defer l.mu.RUnlock()
 	sz := len(l.m[grp])
@@ -82,10 +85,14 @@ func (l *Log) Modelize(p model.Protocol, grp int64, sysp string) deepinfra.Model
 	}
 	for i, msg := range l.m[grp] {
 		if i%2 == 0 { // is user
+			if i == 0 && isusersystem {
+				_ = m.User(sysp + "\n\n" + msg.String())
+				continue
+			}
 			_ = m.User(msg.String())
-		} else {
-			_ = m.Assistant(msg.String())
+			continue
 		}
+		_ = m.Assistant(msg.String())
 	}
 	return m
 }
