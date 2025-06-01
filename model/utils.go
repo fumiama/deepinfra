@@ -12,7 +12,7 @@ func CutLast(txt, sep string) string {
 	}
 	a := strings.LastIndex(txt, sep)
 	if a < 0 {
-		return ""
+		return strings.TrimSpace(txt)
 	}
 	a += len(sep)
 	if a >= len(txt) {
