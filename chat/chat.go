@@ -111,3 +111,12 @@ func Modelize[T any](l *Log, grp int64, f func(int, string) T) []T {
 	}
 	return t
 }
+
+// Reset clears all conversation logs while preserving configuration
+func (l *Log) Reset() {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	for k := range l.m {
+		delete(l.m, k)
+	}
+}
