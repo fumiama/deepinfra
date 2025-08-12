@@ -118,3 +118,12 @@ func (l *Log) Reset() {
 	defer l.mu.Unlock()
 	l.m = make(map[int64][]*batch, 64)
 }
+
+// ResetIn removes specified groups from the conversation logs
+func (l *Log) ResetIn(grps ...int64) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	for _, grp := range grps {
+		delete(l.m, grp)
+	}
+}
