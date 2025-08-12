@@ -116,7 +116,5 @@ func Modelize[T any](l *Log, grp int64, f func(int, string) T) []T {
 func (l *Log) Reset() {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	for k := range l.m {
-		delete(l.m, k)
-	}
+	l.m = make(map[int64][]*batch, 64)
 }
