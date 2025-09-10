@@ -124,8 +124,6 @@ func (l *Log) ResetIn(grps ...int64) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	for _, grp := range grps {
-		if _, exists := l.m[grp]; exists {
-			delete(l.m, grp)
-		}
+		delete(l.m, grp)
 	}
 }

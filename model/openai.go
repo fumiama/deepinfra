@@ -37,6 +37,7 @@ type OpenAI struct {
 	Temperature float32   `json:"temperature"` // Temperature 0.7
 	TopP        float32   `json:"top_p"`       // TopP 0.9
 	MaxTokens   int       `json:"max_tokens"`  // MaxTokens 4096
+	ExtraBody   any       `json:"extra_body"`
 }
 
 // NewOpenAI use temp 0.7, topp 0.9, maxn 4096 if you don't know the meaning.
@@ -57,6 +58,11 @@ func (*OpenAI) API(api, _ string) string {
 func (*OpenAI) Header(key string, h http.Header) {
 	h.Add("Content-Type", "application/json")
 	h.Add("Authorization", "Bearer "+key)
+}
+
+func (opai *OpenAI) SetExtra(body any) *OpenAI {
+	opai.ExtraBody = body
+	return opai
 }
 
 func (opai *OpenAI) Body() *bytes.Buffer {
