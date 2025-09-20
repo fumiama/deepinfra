@@ -1,78 +1,66 @@
 package chat
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/fumiama/deepinfra"
 	"github.com/fumiama/deepinfra/model"
 )
 
-type Log struct {
-	mu            sync.RWMutex
-	cap           int
-	sep           string
-	defaultprompt string
-	namel, namer  string
-	atprefix      string
-	m             map[int64][]*batch
+type Log[T fmt.Stringer] struct {
+	mu                 sync.RWMutex
+	batchcap, itemscap int
+	itemsep            string
+	defaultprompt      string
+	m                  map[int64][]*batch[T]
 }
 
-func NewLog(cap int, sep, defaultprompt, namel, namer, atprefix string) Log {
-	if cap < 2 {
-		panic("cap cannot < 2")
+func NewLog[T fmt.Stringer](batchcap, itemscap int, itemsep, defaultprompt string) Log[T] {
+	if batchcap < 2 {
+		panic("batchcap cannot < 2")
 	}
-	if cap%2 != 0 {
-		panic("cap % 2 must be 0")
+	if batchcap%2 != 0 {
+		panic("batchcap % 2 must be 0")
 	}
-	return Log{
-		cap:           cap,
-		sep:           sep,
+	if itemscap < 1 {
+		panic("itemscap cannot < 1")
+	}
+	return Log[T]{
+		batchcap:      batchcap,
+		itemscap:      itemscap,
+		itemsep:       itemsep,
 		defaultprompt: defaultprompt,
-		namel:         namel,
-		namer:         namer,
-		atprefix:      atprefix,
-		m:             make(map[int64][]*batch, 64),
+		m:             make(map[int64][]*batch[T], 64),
 	}
 }
 
-func (l *Log) Add(grp int64, usr, txt string, isbot, isatme bool) {
+func (l *Log[T]) Add(grp int64, item T, isbot bool) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	msgs, ok := l.m[grp]
 	if !ok {
-		msgs = make([]*batch, 1, l.cap)
-		msgs[0] = l.newbatch(l.cap).add(item{
-			isatme: isatme,
-			usr:    usr, txt: txt,
-		})
+		msgs = make([]*batch[T], 1, l.batchcap)
+		msgs[0] = l.newbatch(l.itemscap).add(item)
 		l.m[grp] = msgs
 		return
 	}
 	isprevusr := len(msgs)%2 != 0
 	if (isprevusr && !isbot) || (!isprevusr && isbot) { // is same
-		_ = msgs[len(msgs)-1].add(item{
-			isatme: isatme,
-			usr:    usr, txt: txt,
-		})
+		_ = msgs[len(msgs)-1].add(item)
 		return
 	}
 	if len(msgs) < cap(msgs) {
-		msgs = append(msgs, l.newbatch(l.cap).add(item{
-			isatme: isatme,
-			usr:    usr, txt: txt,
-		}))
+		msgs = append(msgs, l.newbatch(l.itemscap).add(item))
 		l.m[grp] = msgs
 		return
 	}
 	copy(msgs, msgs[2:])
-	msgs[len(msgs)-2] = l.newbatch(l.cap).add(item{
-		isatme: isatme,
-		usr:    usr, txt: txt,
-	})
+	msgs[len(msgs)-2] = l.newbatch(l.itemscap).add(item)
 	l.m[grp] = msgs[:len(msgs)-1]
 }
 
-func (l *Log) Modelize(p model.Protocol, grp int64, sysp string, isusersystem bool) deepinfra.Model {
+func (l *Log[T]) Modelize(p model.Protocol, grp int64, sysp string, isusersystem bool) deepinfra.Model {
 	m := p
 	if sysp != "" && !isusersystem {
 		m.System(sysp)
@@ -98,14 +86,14 @@ func (l *Log) Modelize(p model.Protocol, grp int64, sysp string, isusersystem bo
 }
 
 // Modelize into any type from index and message
-func Modelize[T any](l *Log, grp int64, f func(int, string) T) []T {
+func Modelize[X any, T fmt.Stringer](l *Log[T], grp int64, f func(int, string) X) []X {
 	l.mu.RLock()
 	defer l.mu.RUnlock()
 	sz := len(l.m[grp])
 	if sz == 0 {
-		return []T{f(0, l.defaultprompt)}
+		return []X{f(0, l.defaultprompt)}
 	}
-	t := make([]T, sz)
+	t := make([]X, sz)
 	for i, msg := range l.m[grp] {
 		t[i] = f(i, msg.String())
 	}
@@ -113,14 +101,14 @@ func Modelize[T any](l *Log, grp int64, f func(int, string) T) []T {
 }
 
 // Reset clears all conversation logs while preserving configuration
-func (l *Log) Reset() {
+func (l *Log[T]) Reset() {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	l.m = make(map[int64][]*batch, 64)
+	l.m = make(map[int64][]*batch[T], 64)
 }
 
 // ResetIn removes specified groups from the conversation logs
-func (l *Log) ResetIn(grps ...int64) {
+func (l *Log[T]) ResetIn(grps ...int64) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	for _, grp := range grps {

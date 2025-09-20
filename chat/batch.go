@@ -1,33 +1,36 @@
 package chat
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
-type batch struct {
-	lst   *Log
-	items []item
+type batch[T fmt.Stringer] struct {
+	lst   *Log[T]
+	items []T
 }
 
-func (l *Log) newbatch(sz int) *batch {
+func (l *Log[T]) newbatch(sz int) *batch[T] {
 	if sz == 0 {
 		panic("sz cannot be 0")
 	}
-	return &batch{
+	return &batch[T]{
 		lst:   l,
-		items: make([]item, 0, sz),
+		items: make([]T, 0, sz),
 	}
 }
 
-func (cl *batch) String() string {
+func (cl *batch[T]) String() string {
 	sb := strings.Builder{}
 	for _, item := range cl.items {
-		sb.WriteString(cl.lst.sep)
-		item.writeToBuilder(&sb, cl.lst.atprefix, cl.lst.namel, cl.lst.namer)
+		sb.WriteString(cl.lst.itemsep)
+		sb.WriteString(item.String())
 	}
-	return sb.String()[len(cl.lst.sep):]
+	return sb.String()[len(cl.lst.itemsep):]
 }
 
 // add without mutex
-func (cl *batch) add(item item) *batch {
+func (cl *batch[T]) add(item T) *batch[T] {
 	v := cl.items
 	defer func() {
 		cl.items = v
