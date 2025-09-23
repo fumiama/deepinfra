@@ -7,22 +7,27 @@ import (
 	"net/http"
 )
 
+type OLLaMAMessage struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
+}
+
 // OLLaMA as an specified example.
 type OLLaMA struct {
 	sep      string
 	Protocol `json:"-"`
 	// callback only
-	ID       string    `json:"id,omitempty"`
-	Object   string    `json:"object,omitempty"`
-	Created  int       `json:"created,omitempty"`
-	Messages []Message `json:"messages"`
+	ID       string          `json:"id,omitempty"`
+	Object   string          `json:"object,omitempty"`
+	Created  int             `json:"created,omitempty"`
+	Messages []OLLaMAMessage `json:"messages"`
 	// callback/request
-	Model       string   `json:"model"`
-	Message     *Message `json:"message,omitempty"`
-	Temperature float32  `json:"temperature"` // Temperature 0.7
-	TopP        float32  `json:"top_p"`       // TopP 0.9
-	MaxTokens   int      `json:"max_tokens"`  // MaxTokens 4096
-	Stream      bool     `json:"stream"`
+	Model       string         `json:"model"`
+	Message     *OLLaMAMessage `json:"message,omitempty"`
+	Temperature float32        `json:"temperature"` // Temperature 0.7
+	TopP        float32        `json:"top_p"`       // TopP 0.9
+	MaxTokens   int            `json:"max_tokens"`  // MaxTokens 4096
+	Stream      bool           `json:"stream"`
 }
 
 // NewOLLaMA use temp 0.7, topp 0.9, maxn 4096 if you don't know the meaning.
@@ -58,41 +63,41 @@ func (ollm *OLLaMA) Parse(body io.Reader) error {
 	return json.NewDecoder(body).Decode(&ollm)
 }
 
-func (ollm *OLLaMA) Output() string {
+func (ollm *OLLaMA) Output() Contents {
 	if ollm.Message == nil {
-		return ""
+		return nil
 	}
-	return CutLast(ollm.Message.Content, ollm.sep)
+	return Contents{NewContentText(CutLast(ollm.Message.Content, ollm.sep))}
 }
 
-func (ollm *OLLaMA) OutputRaw() string {
+func (ollm *OLLaMA) OutputRaw() Contents {
 	if ollm.Message == nil {
-		return ""
+		return nil
 	}
-	return ollm.Message.Content
+	return Contents{NewContentText(ollm.Message.Content)}
 }
 
-func (ollm *OLLaMA) System(prompt string) Protocol {
-	ollm.Messages = make([]Message, 1, 8)
-	ollm.Messages[0] = Message{
+func (ollm *OLLaMA) System(prompt ...Content) Protocol {
+	ollm.Messages = make([]OLLaMAMessage, 1, 8)
+	ollm.Messages[0] = OLLaMAMessage{
 		Role:    "system",
-		Content: prompt,
+		Content: prompt[0].Text,
 	}
 	return ollm
 }
 
-func (ollm *OLLaMA) User(prompt string) Protocol {
-	ollm.Messages = append(ollm.Messages, Message{
+func (ollm *OLLaMA) User(prompt ...Content) Protocol {
+	ollm.Messages = append(ollm.Messages, OLLaMAMessage{
 		Role:    "user",
-		Content: prompt,
+		Content: prompt[0].Text,
 	})
 	return ollm
 }
 
-func (ollm *OLLaMA) Assistant(prompt string) Protocol {
-	ollm.Messages = append(ollm.Messages, Message{
+func (ollm *OLLaMA) Assistant(prompt ...Content) Protocol {
+	ollm.Messages = append(ollm.Messages, OLLaMAMessage{
 		Role:    "assistant",
-		Content: prompt,
+		Content: prompt[0].Text,
 	})
 	return ollm
 }

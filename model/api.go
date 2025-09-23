@@ -12,8 +12,8 @@ type Inputer interface {
 }
 
 type Outputer interface {
-	Output() string
-	OutputRaw() string
+	Output() Contents
+	OutputRaw() Contents
 }
 
 type Requester interface {
@@ -22,9 +22,9 @@ type Requester interface {
 }
 
 type MessageBuilder[T any] interface {
-	System(prompt string) T
-	User(prompt string) T
-	Assistant(prompt string) T
+	System(prompt ...Content) T
+	User(prompt ...Content) T
+	Assistant(prompt ...Content) T
 }
 
 type Protocol interface {

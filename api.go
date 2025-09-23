@@ -52,5 +52,5 @@ func (api *API) Request(model Model) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return model.Output(), nil
+	return model.Output().String(), nil
 }

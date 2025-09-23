@@ -63,24 +63,24 @@ func (l *Log[T]) Add(grp int64, item T, isbot bool) {
 func (l *Log[T]) Modelize(p model.Protocol, grp int64, sysp string, isusersystem bool) deepinfra.Model {
 	m := p
 	if sysp != "" && !isusersystem {
-		m.System(sysp)
+		m.System(model.NewContentText(sysp))
 	}
 	l.mu.RLock()
 	defer l.mu.RUnlock()
 	sz := len(l.m[grp])
 	if sz == 0 {
-		return m.User(l.defaultprompt)
+		return m.User(model.NewContentText(l.defaultprompt))
 	}
 	for i, msg := range l.m[grp] {
 		if i%2 == 0 { // is user
 			if i == 0 && isusersystem {
-				_ = m.User(sysp + "\n\n" + msg.String())
+				_ = m.User(model.NewContentText(sysp + "\n\n" + msg.String()))
 				continue
 			}
-			_ = m.User(msg.String())
+			_ = m.User(model.NewContentText(msg.String()))
 			continue
 		}
-		_ = m.Assistant(msg.String())
+		_ = m.Assistant(model.NewContentText(msg.String()))
 	}
 	return m
 }
