@@ -63,7 +63,7 @@ func (l *Log[T]) Add(grp int64, item T, isbot bool) {
 func (l *Log[T]) Modelize(p model.Protocol, grp int64, sysp string, isusersystem bool) deepinfra.Model {
 	m := p
 	if sysp != "" && !isusersystem {
-		m.System(model.NewContentText(sysp))
+		m.System(sysp)
 	}
 	l.mu.RLock()
 	defer l.mu.RUnlock()

@@ -77,11 +77,11 @@ func (ollm *OLLaMA) OutputRaw() Contents {
 	return Contents{NewContentText(ollm.Message.Content)}
 }
 
-func (ollm *OLLaMA) System(prompt ...Content) Protocol {
+func (ollm *OLLaMA) System(prompt string) Protocol {
 	ollm.Messages = make([]OLLaMAMessage, 1, 8)
 	ollm.Messages[0] = OLLaMAMessage{
 		Role:    "system",
-		Content: prompt[0].Text,
+		Content: prompt,
 	}
 	return ollm
 }

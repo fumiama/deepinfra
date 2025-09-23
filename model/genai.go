@@ -166,9 +166,9 @@ func (cs Contents) ToGenAIParts() []GenAIPart {
 	return ps
 }
 
-func (opai *GenAI) System(prompt ...Content) Protocol {
+func (opai *GenAI) System(prompt string) Protocol {
 	opai.SystemInstruction = &GenAIContent{
-		Parts: Contents(prompt).ToGenAIParts(),
+		Parts: []GenAIPart{{Text: prompt}},
 	}
 	return opai
 }

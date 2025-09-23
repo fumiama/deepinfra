@@ -22,7 +22,7 @@ type Requester interface {
 }
 
 type MessageBuilder[T any] interface {
-	System(prompt ...Content) T
+	System(prompt string) T
 	User(prompt ...Content) T
 	Assistant(prompt ...Content) T
 }

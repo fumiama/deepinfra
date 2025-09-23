@@ -115,7 +115,7 @@ func (opai *OpenAI) OutputRaw() Contents {
 	return nil
 }
 
-func (opai *OpenAI) System(prompt ...Content) Protocol {
+func (opai *OpenAI) System(prompt string) Protocol {
 	opai.Messages = make([]OpenAIMessage, 1, 8)
 	raw, err := json.Marshal(&prompt)
 	if err != nil {
