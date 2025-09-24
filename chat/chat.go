@@ -14,6 +14,7 @@ type Log[T fmt.Stringer] struct {
 	itemsep            string
 	defaultprompt      string
 	m                  map[int64][]*batch[T]
+	preM, postM        func(*T)
 }
 
 func NewLog[T fmt.Stringer](batchcap, itemscap int, itemsep, defaultprompt string) Log[T] {
@@ -33,6 +34,18 @@ func NewLog[T fmt.Stringer](batchcap, itemscap int, itemsep, defaultprompt strin
 		defaultprompt: defaultprompt,
 		m:             make(map[int64][]*batch[T], 64),
 	}
+}
+
+// SetPreModelize will be called before calling item.String()
+func (l *Log[T]) SetPreModelize(fn func(*T)) *Log[T] {
+	l.preM = fn
+	return l
+}
+
+// SetPreModelize will be called after calling item.String()
+func (l *Log[T]) SetPostModelize(fn func(*T)) *Log[T] {
+	l.postM = fn
+	return l
 }
 
 func (l *Log[T]) Add(grp int64, item T, isbot bool) {

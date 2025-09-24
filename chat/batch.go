@@ -22,9 +22,16 @@ func (l *Log[T]) newbatch(sz int) *batch[T] {
 
 func (cl *batch[T]) String() string {
 	sb := strings.Builder{}
-	for _, item := range cl.items {
+	for i := range cl.items {
+		pre, post := cl.lst.preM, cl.lst.postM
+		if pre != nil {
+			pre(&cl.items[i])
+		}
 		sb.WriteString(cl.lst.itemsep)
-		sb.WriteString(item.String())
+		sb.WriteString(cl.items[i].String())
+		if post != nil {
+			post(&cl.items[i])
+		}
 	}
 	return sb.String()[len(cl.lst.itemsep):]
 }
