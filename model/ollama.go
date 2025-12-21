@@ -102,7 +102,7 @@ func (ollm *OLLaMA) Assistant(prompt ...Content) Protocol {
 	return ollm
 }
 
-func (ollm *OLLaMA) Clone() Cloner {
+func (ollm *OLLaMA) Clone() Protocol {
 	x := new(OLLaMA)
 	*x = *ollm
 	x.Messages = nil

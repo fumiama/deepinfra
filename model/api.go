@@ -22,7 +22,7 @@ type Requester interface {
 }
 
 type Cloner interface {
-	Clone() Cloner
+	Clone() Protocol
 }
 
 type MessageBuilder[T any] interface {

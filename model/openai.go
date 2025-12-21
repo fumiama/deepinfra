@@ -156,7 +156,7 @@ func (opai *OpenAI) Assistant(prompt ...Content) Protocol {
 	return opai.normal("assistant", prompt...)
 }
 
-func (opai *OpenAI) Clone() Cloner {
+func (opai *OpenAI) Clone() Protocol {
 	x := new(OpenAI)
 	*x = *opai
 	x.Choices = nil
