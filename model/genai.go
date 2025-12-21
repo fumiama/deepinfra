@@ -188,3 +188,12 @@ func (opai *GenAI) Assistant(prompt ...Content) Protocol {
 	})
 	return opai
 }
+
+func (opai *GenAI) Clone() Cloner {
+	x := new(GenAI)
+	*x = *opai
+	x.SystemInstruction = nil
+	x.Contents = nil
+	x.Candidates = nil
+	return x
+}

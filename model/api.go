@@ -21,6 +21,10 @@ type Requester interface {
 	Header(key string, h http.Header) // Header decorator
 }
 
+type Cloner interface {
+	Clone() Cloner
+}
+
 type MessageBuilder[T any] interface {
 	System(prompt string) T
 	User(prompt ...Content) T
@@ -32,4 +36,5 @@ type Protocol interface {
 	Outputer
 	Requester
 	MessageBuilder[Protocol]
+	Cloner
 }

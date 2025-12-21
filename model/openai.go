@@ -155,3 +155,11 @@ func (opai *OpenAI) User(prompt ...Content) Protocol {
 func (opai *OpenAI) Assistant(prompt ...Content) Protocol {
 	return opai.normal("assistant", prompt...)
 }
+
+func (opai *OpenAI) Clone() Cloner {
+	x := new(OpenAI)
+	*x = *opai
+	x.Choices = nil
+	x.Messages = nil
+	return x
+}
