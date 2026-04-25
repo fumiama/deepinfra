@@ -32,23 +32,25 @@ type OpenAI struct {
 	Created int            `json:"created,omitempty"`
 	Choices []OpenAIChoice `json:"choices,omitempty"`
 	// callback/request
-	Model       string          `json:"model"`
-	Messages    []OpenAIMessage `json:"messages"`
-	Temperature float32         `json:"temperature,omitempty"` // Temperature 0.7
-	TopP        float32         `json:"top_p,omitempty"`       // TopP 0.9
-	MaxTokens   int             `json:"max_tokens,omitempty"`  // MaxTokens 4096
+	Model           string          `json:"model"`
+	Messages        []OpenAIMessage `json:"messages"`
+	Temperature     float32         `json:"temperature,omitempty"` // Temperature 0.7
+	TopP            float32         `json:"top_p,omitempty"`       // TopP 0.9
+	MaxTokens       int             `json:"max_tokens,omitempty"`  // MaxTokens 4096
+	ReasoningEffort string          `json:"reasoning_effort,omitempty"`
 	// extra body
 	EnableThinking bool `json:"enable_thinking"` // EnableThinking is always false in non-stream mode, adapt to 百炼
 }
 
-// NewOpenAI use temp 0.7, topp 0.9, maxn 4096 if you don't know the meaning.
-func NewOpenAI(model, sep string, temp, topp float32, maxn uint) *OpenAI {
+// NewOpenAI use temp 0.7, topp 0.9, maxn 4096, reasoning low if you don't know the meaning.
+func NewOpenAI(model, sep string, temp, topp float32, maxn uint, reasoning string) *OpenAI {
 	opai := new(OpenAI)
 	opai.sep = sep
 	opai.Model = model
 	opai.Temperature = temp
 	opai.TopP = topp
 	opai.MaxTokens = int(maxn)
+	opai.ReasoningEffort = reasoning
 	return opai
 }
 
